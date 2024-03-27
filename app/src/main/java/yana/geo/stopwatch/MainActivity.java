@@ -1,5 +1,6 @@
 package yana.geo.stopwatch;
 
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -14,13 +15,41 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewTimer;
     private int seconds = 0;
     private boolean isRunning = false;
+    private boolean wasRunning = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         textViewTimer = findViewById(R.id.textViewTimer);
-        runTimer();
+        if (savedInstanceState !=null){
+            seconds = savedInstanceState.getInt("seconds");
+            isRunning = savedInstanceState.getBoolean("isRunning");
+            wasRunning = savedInstanceState.getBoolean("wasRunning");
+        }
+              runTimer();
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        wasRunning = isRunning;
+        isRunning = false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isRunning = wasRunning;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("seconds", seconds);
+        outState.putBoolean("isRunning", isRunning);
+        outState.putBoolean("wasRunning", wasRunning);
     }
 
     public void StartTimerOnClick(View view) {
